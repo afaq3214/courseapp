@@ -14,11 +14,16 @@ alter table public.courses add column if not exists language text null;
 alter table public.courses add column if not exists level text null;
 alter table public.courses add column if not exists category text null;
 
+-- Add foreign key relationship to profiles table
+alter table public.courses 
+add constraint courses_user_id_fkey 
+foreign key (user_id) references public.profiles(id) on delete cascade;
+
 alter table public.courses enable row level security;
 
-create policy "courses_select_own" on public.courses
+create policy "courses_select_all" on public.courses
 for select
-using (auth.uid() = user_id);
+using (true);
 
 create policy "courses_insert_own" on public.courses
 for insert
@@ -47,9 +52,9 @@ create unique index if not exists profiles_username_key on public.profiles (lowe
 
 alter table public.profiles enable row level security;
 
-create policy "profiles_select_own" on public.profiles
+create policy "profiles_select_all" on public.profiles
 for select
-using (auth.uid() = id);
+using (true);
 
 create policy "profiles_insert_own" on public.profiles
 for insert
